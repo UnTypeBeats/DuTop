@@ -28,17 +28,21 @@ DuTop runs on all major platforms:
 **Download pre-built binary:**
 ```bash
 # macOS (Universal - Intel + Apple Silicon)
-curl -L https://github.com/yourusername/dutop/releases/latest/download/dutop-VERSION-universal-apple-darwin.tar.gz | tar xz
+curl -L https://github.com/UnTypeBeats/DuTop/releases/latest/download/dutop-0.1.0-universal-apple-darwin.tar.gz | tar xz
+# IMPORTANT: Remove quarantine attribute on macOS
+xattr -d com.apple.quarantine dutop-universal
 sudo mv dutop-universal /usr/local/bin/dutop
 
 # Linux x86_64
-curl -L https://github.com/yourusername/dutop/releases/latest/download/dutop-VERSION-x86_64-unknown-linux-gnu.tar.gz | tar xz
+curl -L https://github.com/UnTypeBeats/DuTop/releases/latest/download/dutop-0.1.0-x86_64-unknown-linux-gnu.tar.gz | tar xz
 sudo mv dutop /usr/local/bin/
 
 # Linux (static musl - works everywhere)
-curl -L https://github.com/yourusername/dutop/releases/latest/download/dutop-VERSION-x86_64-unknown-linux-musl.tar.gz | tar xz
+curl -L https://github.com/UnTypeBeats/DuTop/releases/latest/download/dutop-0.1.0-x86_64-unknown-linux-musl.tar.gz | tar xz
 sudo mv dutop /usr/local/bin/
 ```
+
+> **⚠️ macOS Users:** Downloaded binaries will be blocked by Gatekeeper. You MUST run `xattr -d com.apple.quarantine dutop-universal` before installation.
 
 **Using Cargo (from source):**
 ```bash
@@ -74,9 +78,12 @@ scoop install dutop
 ### Build from Source
 
 ```bash
-git clone https://github.com/yourusername/dutop
+git clone https://github.com/UnTypeBeats/dutop
 cd dutop
 cargo build --release
+
+# macOS: Remove quarantine attribute (bypasses Gatekeeper)
+xattr -d com.apple.quarantine target/release/dutop
 
 # Install (Unix)
 sudo cp target/release/dutop /usr/local/bin/
@@ -86,6 +93,29 @@ copy target\release\dutop.exe C:\Windows\System32\
 ```
 
 Binary size: **~1.6MB** (optimized and stripped)
+
+#### macOS Gatekeeper Note
+
+If you get a "cannot be opened because the developer cannot be verified" error:
+
+**Option 1: Remove quarantine attribute**
+```bash
+xattr -d com.apple.quarantine /path/to/dutop
+```
+
+**Option 2: System Settings**
+1. Right-click the binary → "Open"
+2. Click "Open" in the security dialog
+3. macOS will remember this exception
+
+**Option 3: Command line bypass**
+```bash
+sudo spctl --master-disable  # Disable Gatekeeper (not recommended)
+# Run dutop
+sudo spctl --master-enable   # Re-enable Gatekeeper
+```
+
+For distributed binaries, proper code signing and notarization are needed (requires Apple Developer account).
 
 ## Usage
 
