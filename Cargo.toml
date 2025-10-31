@@ -1,0 +1,43 @@
+[package]
+name = "dutop"
+version = "0.1.0"
+edition = "2021"
+authors = ["DuTop Contributors"]
+description = "High-performance disk usage analysis tool"
+license = "MIT"
+repository = "https://github.com/yourusername/dutop"
+readme = "README.md"
+keywords = ["disk-usage", "du", "cli", "filesystem"]
+categories = ["command-line-utilities"]
+
+[[bin]]
+name = "dutop"
+path = "src/main.rs"
+
+[lib]
+name = "dutop"
+path = "src/lib.rs"
+
+[dependencies]
+clap = { version = "4.4", features = ["derive", "cargo"] }
+walkdir = "2.4"
+rayon = "1.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+log = "0.4"
+env_logger = "0.11"
+glob = "0.3"
+atty = "0.2"
+
+[dev-dependencies]
+criterion = "0.5"
+tempfile = "3.8"
+assert_cmd = "2.0"
+predicates = "3.0"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
