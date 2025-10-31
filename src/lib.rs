@@ -231,13 +231,15 @@ fn get_inode_key(metadata: &std::fs::Metadata) -> (u64, u64) {
     (metadata.dev(), metadata.ino())
 }
 
-/// Get a unique key for a file on Windows (using file index)
+/// Get a unique key for a file on Windows
 #[cfg(windows)]
-fn get_inode_key(metadata: &std::fs::Metadata) -> (u64, u64) {
-    use std::os::windows::fs::MetadataExt;
-    // On Windows, use volume serial number and file index
-    // This is a simplified approach; for full correctness we'd need nFileIndexHigh/Low
-    (metadata.volume_serial_number().unwrap_or(0), metadata.file_index().unwrap_or(0))
+fn get_inode_key(_metadata: &std::fs::Metadata) -> (u64, u64) {
+    // On Windows, proper hard link detection requires unstable APIs (volume_serial_number/file_index)
+    // For stable builds, we use a counter approach. Hard links are rare on Windows, so this is acceptable.
+    // Each file gets a unique counter value, which may slightly overcount if hard links exist.
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static COUNTER: AtomicU64 = AtomicU64::new(0);
+    (0, COUNTER.fetch_add(1, Ordering::SeqCst))
 }
 
 /// Fallback for other platforms
